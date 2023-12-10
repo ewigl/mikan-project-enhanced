@@ -28,7 +28,7 @@
         padding-left: 8px;
     }
 
-    #rpc-setting-box {
+    #rpc-settings-box {
         display: none;
         border-left: 1px solid;
         padding-left: 8px;
@@ -79,6 +79,16 @@
                 value: '',
             },
         ],
+        visibleSettings: [
+            {
+                id: 'magnet-link-box',
+                value: 'show_magnet_link',
+            },
+            {
+                id: 'rpc-settings-box',
+                value: 'show_rpc_settings',
+            },
+        ],
     }
 
     // 默认 message
@@ -101,8 +111,16 @@
             GM_setValue(name, value)
         },
         initDefaultConfig() {
-            defaultConfig.rpcSettings.forEach((value) => {
-                util.getValue(value.name) === undefined && util.setValue(value.name, value.value)
+            defaultConfig.rpcSettings.forEach((item) => {
+                util.getValue(item.name) === undefined && util.setValue(item.name, item.value)
+            })
+            defaultConfig.visibleSettings.forEach((item) => {
+                util.getValue(item.value) === undefined && util.setValue(item.value, false)
+            })
+        },
+        changeVisibility() {
+            defaultConfig.visibleSettings.forEach((item) => {
+                util.getValue(item.value) ? $('#' + item.id).show() : $('#' + item.id).hide()
             })
         },
         resetDefaultConfig() {
@@ -171,6 +189,7 @@
         onCopyMagnet: (event) => {
             let target = event.target
             let magnetLink = $(target).attr('data-clipboard-text')
+
             // 主 DOM
             let mpardDom = `
             <div>
@@ -190,7 +209,7 @@
                 </div>
             </div>
 
-            <div id="rpc-setting-box">
+            <div id="rpc-settings-box">
                 <div>
                     修改时自动保存
                 </div>
@@ -256,6 +275,12 @@
                             util.sendToRPC(magnetLink)
                         }
                     })
+                util.changeVisibility()
+            } else {
+                message.fire({
+                    icon: 'error',
+                    title: '未找到磁力链接',
+                })
             }
         },
         directOpenMagnetLink() {
@@ -263,10 +288,12 @@
             window.open(magnetLink)
         },
         onClickShowMagnetLinkButton: async () => {
+            util.setValue('show_magnet_link', !util.getValue('show_magnet_link'))
             $('#magnet-link-box').toggle()
         },
         onClickRPCSettingsButton: async () => {
-            $('#rpc-setting-box').toggle()
+            util.setValue('show_rpc_settings', !util.getValue('show_rpc_settings'))
+            $('#rpc-settings-box').toggle()
         },
         onResetRPCSettings: async () => {
             util.resetDefaultConfig()
