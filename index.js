@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         蜜柑计划 快速下载 - Mikan Project Quick Download
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  复制磁力链接时 可以直接打开, 也可以通过 RPC 快速创建 aria2 下载任务
 // @author       Licht
 // @license      MIT
