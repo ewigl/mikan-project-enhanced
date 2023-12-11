@@ -5,7 +5,7 @@
 // @description  复制磁力链接时 可以直接打开, 也可以通过 RPC 快速创建 aria2 下载任务
 // @author       Licht
 // @license      MIT
-// @homepage     https://github.com/ewigl/mpard
+// @homepage     https://github.com/ewigl/mpqd
 // @match        http*://mikanani.me/*
 // @icon         https://mikanani.me/images/favicon.ico?v=2
 // @require      https://unpkg.com/jquery@3.7.1/dist/jquery.min.js
