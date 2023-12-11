@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         蜜柑计划 快速下载 - Mikan Project Quick Download
 // @namespace    https://github.com/ewigl/mpqd
-// @version      0.3
+// @version      0.31
 // @description  主要功能: 复制磁链时直接打开, 高亮磁链,  通过RPC快速创建aria2下载任务.
 // @author       Licht
 // @license      MIT
@@ -105,7 +105,7 @@
                 value: 'show_rpc_settings',
             },
         ],
-        colorList: ['#ff530e', '#8956a1', '#546fb4', '#00b8ee', '#32b16c', '#edcf00', '#fe9b36', '#59b7d0', '#4cb665', ''],
+        colorList: ['#ff530e', '#8956a1', '#546fb4', '#00b8ee', '#32b16c', '#edcf00', '#fe9b36', '#59b7d0', '#4cb665', '#888'],
         defaultColor: '#888',
     }
 
@@ -330,14 +330,13 @@
         },
         onClickHighlightMagnetBox: async (event) => {
             let target = event.target
+            // 避免点击Box空白处时触发
+            if ($(target).prop('id') === 'highlight-magnet-box') {
+                return
+            }
             let color = $(target).css('background-color')
             util.setValue('magnet_highlight_color', color)
-            //
-            GM_addStyle(`
-            .magnet-link {
-                color: ${color};
-            }
-            `)
+            GM_addStyle(`.magnet-link { color: ${color}; }`)
         },
         onClickRPCSettingsButton: async () => {
             util.setValue('show_rpc_settings', !util.getValue('show_rpc_settings'))
