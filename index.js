@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         蜜柑计划 快速下载 - Mikan Project Quick Download
 // @namespace    https://github.com/ewigl/mpqd
-// @version      0.31
+// @version      0.32
 // @description  主要功能: 复制磁链时直接打开, 高亮磁链,  通过RPC快速创建aria2下载任务.
 // @author       Licht
 // @license      MIT
@@ -42,6 +42,7 @@
         width: 20px;
         height: 20px;
         margin: 2px;
+        border: 1px solid black;
         border-radius: 50%;
         cursor: pointer;
     }
@@ -105,7 +106,20 @@
                 value: 'show_rpc_settings',
             },
         ],
-        colorList: ['#ff530e', '#8956a1', '#546fb4', '#00b8ee', '#32b16c', '#edcf00', '#fe9b36', '#59b7d0', '#4cb665', '#888'],
+        colorList: [
+            '#ff530e',
+            '#8956a1',
+            '#546fb4',
+            '#00b8ee',
+            '#32b16c',
+            '#edcf00',
+            '#fe9b36',
+            '#59b7d0',
+            '#4cb665',
+            '#fff',
+            '#000',
+            '#888',
+        ],
         defaultColor: '#888',
     }
 
