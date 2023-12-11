@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         蜜柑计划 快速下载 - Mikan Project Quick Download
-// @namespace    http://tampermonkey.net/
-// @version      0.2
-// @description  复制磁力链接时 可以直接打开, 也可以通过 RPC 快速创建 aria2 下载任务
+// @namespace    https://github.com/ewigl/mpqd
+// @version      0.3
+// @description  主要功能: 复制磁链时直接打开, 高亮磁链,  通过RPC快速创建aria2下载任务.
 // @author       Licht
 // @license      MIT
 // @homepage     https://github.com/ewigl/mpqd
@@ -22,18 +22,12 @@
     'use strict'
 
     let styleCSS = `
-    #magnet-link-box {
-        display: none;
+    .custom-box {
+        /* display: none; */
         border-left: 1px solid;
         padding-left: 8px;
     }
-
-    #rpc-settings-box {
-        display: none;
-        border-left: 1px solid;
-        padding-left: 8px;
-    }
-
+    
     .custom-button {
         color: white;
         background-color: slategrey;
@@ -42,16 +36,33 @@
         border: none;
         border-radius: 5px;
     }
-
+    
+    .highlight-color-dot {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        margin: 2px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+    
+    .highlight-magnet-button {
+        background-color: slateblue;
+    }
+    
+    .rpc-settings-button {
+        background-color: blueviolet;
+    }
+    
     .rpc-settings-label {
         display: flex;
         align-items: center;
     }
-
+    
     .rpc-settings-label div {
         width: 20%;
     }
-
+    
     .rpc-settings-input {
         display: inline-block;
         flex: 1;
@@ -60,6 +71,7 @@
         border: 1px solid;
         border-radius: 5px;
     }
+     
     `
     GM_addStyle(styleCSS)
 
@@ -85,10 +97,16 @@
                 value: 'show_magnet_link',
             },
             {
+                id: 'highlight-magnet-box',
+                value: 'show_highlight_magnet',
+            },
+            {
                 id: 'rpc-settings-box',
                 value: 'show_rpc_settings',
             },
         ],
+        colorList: ['#ff530e', '#8956a1', '#546fb4', '#00b8ee', '#32b16c', '#edcf00', '#fe9b36', '#59b7d0', '#4cb665', ''],
+        defaultColor: '#888',
     }
 
     // 默认 message
@@ -117,6 +135,16 @@
             defaultConfig.visibleSettings.forEach((item) => {
                 util.getValue(item.value) === undefined && util.setValue(item.value, false)
             })
+            util.getValue('magnet_highlight_color') === undefined &&
+                util.setValue('magnet_highlight_color', defaultConfig.defaultColor)
+            GM_addStyle(`.magnet-link {color: ${util.getValue('magnet_highlight_color')}}`)
+        },
+        getDefaultColorButtonsDom() {
+            let dom = ''
+            defaultConfig.colorList.forEach((item) => {
+                dom += `<div class="highlight-color-dot" style="background-color: ${item}"></div>`
+            })
+            return dom
         },
         changeVisibility() {
             defaultConfig.visibleSettings.forEach((item) => {
@@ -191,7 +219,8 @@
             let magnetLink = $(target).attr('data-clipboard-text')
 
             // 主 DOM
-            let mpardDom = `
+            let mpqdDom = `
+            <!-- 磁链操作 -->
             <div>
                 <button id="show-magnet-button" class="custom-button">
                     显示/隐藏磁链
@@ -199,17 +228,31 @@
                 <button id="direct-open-button" class="custom-button">
                     直接打开磁链
                 </button>
-                <div id="magnet-link-box">
+                <div id="magnet-link-box" class="custom-box">
                     ${magnetLink}
                 </div>
-                <div>
-                    <button id="rpc-settings-button" class="custom-button">
-                        显示/隐藏 RPC 设置
-                    </button>
+            </div>
+        
+            <!-- 高亮磁链 -->
+            <div>
+                <button id="highlight-magnet-button" class="custom-button highlight-magnet-button">
+                    高亮磁链
+                </button>
+                <button id="un-highlight-magnet-button" class="custom-button">
+                    取消高亮磁链
+                </button>
+                <div id="highlight-magnet-box" class="custom-box">
+                    ${util.getDefaultColorButtonsDom()}
                 </div>
             </div>
-
-            <div id="rpc-settings-box">
+        
+            <!-- RPC 设置 -->
+            <div>
+                <button id="rpc-settings-button" class="custom-button rpc-settings-button">
+                    显示/隐藏 RPC 设置
+                </button>
+            </div>
+            <div id="rpc-settings-box" class="custom-box">
                 <div>
                     修改时自动保存
                 </div>
@@ -217,43 +260,29 @@
                 <div>
                     <label class="rpc-settings-label">
                         <div>RPC地址:</div>
-                        <input
-                            id="rpc-address"
-                            type="text"
-                            class="rpc-settings-input"
-                            title="默认地址为 http://localhost:6800/jsonrpc"
-                            value="${util.getValue('rpc_address')}"
-                        >
+                        <input id="rpc-address" type="text" class="rpc-settings-input"
+                            title="默认地址为 http://localhost:6800/jsonrpc" value="${util.getValue('rpc_address')}">
                     </label>
                 </div>
                 <div>
                     <label class="rpc-settings-label">
                         <div>RPC密钥:</div>
-                        <input
-                            id="rpc-secret"
-                            type="text"
-                            class="rpc-settings-input"
-                            title="无密钥时留空"
-                            value="${util.getValue('rpc_secret')}"
-                        >
+                        <input id="rpc-secret" type="text" class="rpc-settings-input" title="无密钥时留空"
+                            value="${util.getValue('rpc_secret')}">
                     </label>
                 </div>
                 <div>
                     <label class="rpc-settings-label">
                         <div>下载目录:</div>
-                        <input
-                            id="rpc-dir"
-                            type="text"
-                            class="rpc-settings-input"
-                            title="留空则为 aria2 默认路径"
-                            value="${util.getValue('rpc_dir')}"
-                        >
+                        <input id="rpc-dir" type="text" class="rpc-settings-input" title="留空则为 aria2 默认路径"
+                            value="${util.getValue('rpc_dir')}">
                     </label>
                 </div>
-                <button id="rpc-reset-button" class="custom-button">
+                <button id="rpc-reset-button" class="custom-button rpc-settings-button">
                     重置为默认设置
                 </button>
             </div>
+            <!-- 提示 -->
             <div>
                 <b>
                     是否使用 Aria2 RPC 下载该磁力链接 ?
@@ -264,10 +293,10 @@
             if (magnetLink) {
                 message
                     .fire({
-                        icon: 'success',
+                        showCloseButton: true,
                         showCancelButton: true,
                         title: '已复制磁力链接到剪切板',
-                        html: mpardDom,
+                        html: mpqdDom,
                         timer: undefined,
                     })
                     .then((result) => {
@@ -290,6 +319,25 @@
         onClickShowMagnetLinkButton: async () => {
             util.setValue('show_magnet_link', !util.getValue('show_magnet_link'))
             $('#magnet-link-box').toggle()
+        },
+        onClickHighlightMagnetButton: async () => {
+            util.setValue('highlight_magnet', !util.getValue('highlight_magnet'))
+            $('#highlight-magnet-box').toggle()
+        },
+        onClickUnHighlightMagnetButton: async () => {
+            util.setValue('magnet_highlight_color', defaultConfig.defaultColor)
+            GM_addStyle(`.magnet-link {color: ${util.getValue('magnet_highlight_color')}}`)
+        },
+        onClickHighlightMagnetBox: async (event) => {
+            let target = event.target
+            let color = $(target).css('background-color')
+            util.setValue('magnet_highlight_color', color)
+            //
+            GM_addStyle(`
+            .magnet-link {
+                color: ${color};
+            }
+            `)
         },
         onClickRPCSettingsButton: async () => {
             util.setValue('show_rpc_settings', !util.getValue('show_rpc_settings'))
@@ -316,6 +364,12 @@
             $(document).on('click', '#direct-open-button', operation.directOpenMagnetLink)
             // 显示磁链
             $(document).on('click', '#show-magnet-button', operation.onClickShowMagnetLinkButton)
+            // 高亮磁链
+            $(document).on('click', '#highlight-magnet-button', operation.onClickHighlightMagnetButton)
+            // 取消高亮
+            $(document).on('click', '#un-highlight-magnet-button', operation.onClickUnHighlightMagnetButton)
+            // 点击颜色
+            $(document).on('click', '#highlight-magnet-box', operation.onClickHighlightMagnetBox)
             // RPC设置
             $(document).on('click', '#rpc-settings-button', operation.onClickRPCSettingsButton)
             // 重置RPC设置

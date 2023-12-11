@@ -8,6 +8,10 @@
 
 也可以通过 RPC 快速创建 aria2 下载任务
 
-![01](https://raw.githubusercontent.com/ewigl/mpqd/main/images/01.jpg)
+V 0.3
+
+![01](https://raw.githubusercontent.com/ewigl/mpqd/main/images/03.jpg)
+
+V 0.3-
 
 ![02](https://raw.githubusercontent.com/ewigl/mpqd/main/images/02.jpg)
