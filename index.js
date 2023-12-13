@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         蜜柑计划 快速下载 - Mikan Project Quick Download
 // @namespace    https://github.com/ewigl/mpqd
-// @version      0.32
+// @version      0.3.3
 // @description  主要功能: 复制磁链时直接打开, 高亮磁链,  通过RPC快速创建aria2下载任务.
 // @author       Licht
 // @license      MIT
@@ -28,6 +28,19 @@
         padding-left: 8px;
     }
     
+    .direct-magnet-link {
+        color: white;
+        text-decoration: none;
+    }
+
+    .direct-magnet-link:hover {
+        color: white;
+    }
+        
+    .direct-magnet-link:focus {
+        color: white;
+    }
+
     .custom-button {
         color: white;
         background-color: slategrey;
@@ -108,12 +121,12 @@
         ],
         colorList: [
             '#ff530e',
-            '#8956a1',
-            '#546fb4',
-            '#00b8ee',
-            '#32b16c',
-            '#edcf00',
             '#fe9b36',
+            '#edcf00',
+            '#32b16c',
+            '#00b8ee',
+            '#546fb4',
+            '#8956a1',
             '#59b7d0',
             '#4cb665',
             '#fff',
@@ -240,7 +253,9 @@
                     显示/隐藏磁链
                 </button>
                 <button id="direct-open-button" class="custom-button">
+                    <a href="${magnetLink}" class="direct-magnet-link">
                     直接打开磁链
+                    </a>
                 </button>
                 <div id="magnet-link-box" class="custom-box">
                     ${magnetLink}
@@ -326,10 +341,6 @@
                 })
             }
         },
-        directOpenMagnetLink() {
-            let magnetLink = $('#magnet-link-box').text()
-            window.open(magnetLink)
-        },
         onClickShowMagnetLinkButton: async () => {
             util.setValue('show_magnet_link', !util.getValue('show_magnet_link'))
             $('#magnet-link-box').toggle()
@@ -373,8 +384,6 @@
         addListeners() {
             // 入口
             $(document).on('click', '[data-clipboard-text]', operation.onCopyMagnet)
-            // 直接打开
-            $(document).on('click', '#direct-open-button', operation.directOpenMagnetLink)
             // 显示磁链
             $(document).on('click', '#show-magnet-button', operation.onClickShowMagnetLinkButton)
             // 高亮磁链
