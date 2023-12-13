@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         蜜柑计划 快速下载 - Mikan Project Quick Download
 // @namespace    https://github.com/ewigl/mpqd
-// @version      0.3.3
-// @description  主要功能: 复制磁链时直接打开, 高亮磁链,  通过RPC快速创建aria2下载任务.
+// @version      0.3.4
+// @description  复制磁链时直接打开, 高亮磁链,  通过RPC快速创建aria2下载任务.
 // @author       Licht
 // @license      MIT
 // @homepage     https://github.com/ewigl/mpqd
@@ -26,19 +26,6 @@
         /* display: none; */
         border-left: 1px solid;
         padding-left: 8px;
-    }
-    
-    .direct-magnet-link {
-        color: white;
-        text-decoration: none;
-    }
-
-    .direct-magnet-link:hover {
-        color: white;
-    }
-        
-    .direct-magnet-link:focus {
-        color: white;
     }
 
     .custom-button {
@@ -252,11 +239,11 @@
                 <button id="show-magnet-button" class="custom-button">
                     显示/隐藏磁链
                 </button>
-                <button id="direct-open-button" class="custom-button">
-                    <a href="${magnetLink}" class="direct-magnet-link">
-                    直接打开磁链
-                    </a>
-                </button>
+                <a href="${magnetLink}">
+                    <button class="custom-button">
+                        直接打开磁链
+                    </button>
+                </a>
                 <div id="magnet-link-box" class="custom-box">
                     ${magnetLink}
                 </div>
