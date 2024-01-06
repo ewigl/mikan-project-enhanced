@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         蜜柑计划 快速下载 - Mikan Project Quick Download
 // @namespace    https://github.com/ewigl/mpqd
-// @version      0.3.4
+// @version      0.3.5
 // @description  复制磁链时直接打开, 高亮磁链,  通过RPC快速创建aria2下载任务.
 // @author       Licht
 // @license      MIT
@@ -10,7 +10,6 @@
 // @icon         https://mikanani.me/images/favicon.ico?v=2
 // @require      https://unpkg.com/jquery@3.7.1/dist/jquery.min.js
 // @require      https://unpkg.com/sweetalert2@11.10.1/dist/sweetalert2.all.min.js
-// @connect      localhost
 // @connect      *
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getValue
@@ -21,9 +20,8 @@
 ;(function () {
     'use strict'
 
-    let styleCSS = `
+    const styleCSS = `
     .custom-box {
-        /* display: none; */
         border-left: 1px solid;
         padding-left: 8px;
     }
@@ -72,12 +70,11 @@
         border: 1px solid;
         border-radius: 5px;
     }
-     
     `
     GM_addStyle(styleCSS)
 
     // 默认设置
-    let defaultConfig = {
+    const defaultConfig = {
         rpcSettings: [
             {
                 name: 'rpc_address',
@@ -149,8 +146,10 @@
             defaultConfig.visibleSettings.forEach((item) => {
                 util.getValue(item.value) === undefined && util.setValue(item.value, false)
             })
+            // 高亮磁链颜色
             util.getValue('magnet_highlight_color') === undefined &&
                 util.setValue('magnet_highlight_color', defaultConfig.defaultColor)
+            // 高亮磁链
             GM_addStyle(`.magnet-link {color: ${util.getValue('magnet_highlight_color')}}`)
         },
         getDefaultColorButtonsDom() {
