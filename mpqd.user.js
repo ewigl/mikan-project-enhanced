@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         蜜柑计划 快速下载 - Mikan Project Quick Download
-// @namespace    https://github.com/ewigl/mpqd
+// @namespace    https://github.com/ewigl/mpus
 // @version      0.3.5
-// @description  复制磁链时直接打开, 高亮磁链,  通过RPC快速创建aria2下载任务.
+// @description  高亮磁链, 复制磁链后直接打开, 通过RPC快速创建aria2下载任务.
 // @author       Licht
 // @license      MIT
-// @homepage     https://github.com/ewigl/mpqd
+// @homepage     https://github.com/ewigl/mpus
 // @match        http*://mikanani.me/*
 // @icon         https://mikanani.me/images/favicon.ico?v=2
 // @require      https://unpkg.com/jquery@3.7.1/dist/jquery.min.js
@@ -121,7 +121,7 @@
     }
 
     // 默认 message
-    let message = Swal.mixin({
+    const message = Swal.mixin({
         position: 'center-end',
         toast: true,
         confirmButtonText: '确定',
@@ -132,7 +132,7 @@
     })
 
     // 工具
-    let util = {
+    const util = {
         getValue(name) {
             return GM_getValue(name)
         },
@@ -226,7 +226,7 @@
         },
     }
 
-    let operation = {
+    const operation = {
         onCopyMagnet: (event) => {
             let target = event.target
             let magnetLink = $(target).attr('data-clipboard-text')
@@ -362,7 +362,7 @@
     }
 
     // Main
-    let main = {
+    const main = {
         init() {
             util.initDefaultConfig()
             this.addListeners()
