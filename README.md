@@ -8,6 +8,10 @@ V 0.4
 
 在订阅更新处添加了一个设置按钮
 
+高亮磁链
+
+![05](https://raw.githubusercontent.com/ewigl/mpus/main/images/05.jpg)
+
 ![02](https://raw.githubusercontent.com/ewigl/mpus/main/images/02.jpg)
 
 ![03](https://raw.githubusercontent.com/ewigl/mpus/main/images/03.jpg)
