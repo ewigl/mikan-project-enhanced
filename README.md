@@ -19,7 +19,3 @@ V 0.4
 ![03](https://raw.githubusercontent.com/ewigl/mpus/main/images/03.jpg)
 
 ![04](https://raw.githubusercontent.com/ewigl/mpus/main/images/04.jpg)
-
-V 0.3
-
-![01](https://raw.githubusercontent.com/ewigl/mpus/main/images/01.jpg)
