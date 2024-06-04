@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         蜜柑计划 快速下载 - Mikan Project Quick Download
 // @namespace    https://github.com/ewigl/mpus
-// @version      0.5.0
+// @version      0.5.1
 // @description  高亮磁链, 复制磁链(时/后)直接打开, 通过RPC快速创建aria2下载任务.
 // @author       Licht
 // @license      MIT
@@ -344,7 +344,12 @@
         },
 
         onSubClick: async (event) => {
+            // to "stopPropagation"
+            // if target has no class "js-expand_bangumi-subgroup" or "tag-res-name", return
+            if (!$(event.target).hasClass('js-expand_bangumi-subgroup') && !$(event.target).hasClass('tag-res-name')) return
+
             let currentTarget = event.currentTarget
+            console.log('currentTarget', currentTarget)
             // get data-bangumisubgroupindex
             let bangumiSubGroupIndex = $(currentTarget).attr('data-bangumisubgroupindex')
             // get mid-frame element js-expand_bangumi-subgroup-x-episodes
