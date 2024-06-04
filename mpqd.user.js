@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         蜜柑计划 快速下载 - Mikan Project Quick Download
 // @namespace    https://github.com/ewigl/mpus
-// @version      0.5.1
+// @version      0.5.2
 // @description  高亮磁链, (批量)复制磁链(时/后)直接打开, 通过RPC快速创建aria2下载任务.
 // @author       Licht
 // @license      MIT
@@ -163,25 +163,40 @@
                 util.setValue(value.name, value.value)
             })
         },
-        sendToRPC: async (magnetLink) => {
+        sendToRPC: async (magnetLinks) => {
             let rpc = {
                 address: util.getValue('rpc_address'),
                 secret: util.getValue('rpc_secret'),
                 dir: util.getValue('rpc_dir').trim() === '' ? undefined : util.getValue('rpc_dir'),
             }
 
-            let rpcData = {
-                id: new Date().getTime(),
-                jsonrpc: '2.0',
-                method: 'aria2.addUri',
-                params: [
-                    `token:${rpc.secret}`,
-                    [magnetLink],
-                    {
-                        dir: rpc.dir,
-                    },
-                ],
-            }
+            // let rpcData = {
+            //     id: new Date().getTime(),
+            //     jsonrpc: '2.0',
+            //     method: 'aria2.addUri',
+            //     params: [
+            //         `token:${rpc.secret}`,
+            //         [magnetLink],
+            //         {
+            //             dir: rpc.dir,
+            //         },
+            //     ],
+            // }
+
+            let rpcData = magnetLinks.map((magnetLink) => {
+                return {
+                    id: new Date().getTime(),
+                    jsonrpc: '2.0',
+                    method: 'aria2.addUri',
+                    params: [
+                        `token:${rpc.secret}`,
+                        [magnetLink],
+                        {
+                            dir: rpc.dir,
+                        },
+                    ],
+                }
+            })
 
             GM_xmlhttpRequest({
                 method: 'POST',
@@ -332,7 +347,7 @@
                     })
                     .then((result) => {
                         if (result.isConfirmed) {
-                            util.sendToRPC(magnetLink)
+                            util.sendToRPC([magnetLink])
                         }
                     })
             } else {
@@ -376,9 +391,7 @@
                             .then((result) => {
                                 if (result.isConfirmed) {
                                     // cycle send to rpc
-                                    for (let i = 0; i < magnetLinks.length; i++) {
-                                        util.sendToRPC(magnetLinks[i])
-                                    }
+                                    util.sendToRPC(magnetLinks)
                                 }
                             })
                     })
