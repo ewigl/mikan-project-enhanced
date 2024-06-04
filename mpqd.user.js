@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         蜜柑计划 快速下载 - Mikan Project Quick Download
 // @namespace    https://github.com/ewigl/mpus
-// @version      0.4.0
+// @version      0.5.0
 // @description  高亮磁链, 复制磁链(时/后)直接打开, 通过RPC快速创建aria2下载任务.
 // @author       Licht
 // @license      MIT
@@ -12,16 +12,22 @@
 // @require      https://unpkg.com/sweetalert2@11.10.1/dist/sweetalert2.all.min.js
 // @connect      localhost
 // @connect      *
-// @grant        GM_xmlhttpRequest
+// @grant        GM_addStyle
+// @grant        GM_setClipboard
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @grant        GM_addStyle
+// @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
 ;(function () {
     'use strict'
 
     const styleCSS = `
+    
+    .js-expand_bangumi-subgroup {
+        cursor: alias;
+    }
+
     .custom-box {
         border-left: 2px solid;
         padding-left: 8px;
@@ -336,6 +342,49 @@
                 })
             }
         },
+
+        onSubClick: async (event) => {
+            let currentTarget = event.currentTarget
+            // get data-bangumisubgroupindex
+            let bangumiSubGroupIndex = $(currentTarget).attr('data-bangumisubgroupindex')
+            // get mid-frame element js-expand_bangumi-subgroup-x-episodes
+            let episodesElement = $('.js-expand_bangumi-subgroup-' + bangumiSubGroupIndex + '-episodes')[0]
+
+            if (episodesElement) {
+                // get elements that have attr "data-clipboard-text"
+                let magnetElements = $(episodesElement).find('[data-clipboard-text]')
+                // map to array
+                let magnetLinks = []
+                magnetElements.each((_index, element) => {
+                    magnetLinks.push($(element).attr('data-clipboard-text'))
+                })
+
+                if (magnetLinks.length) {
+                    GM_setClipboard(magnetLinks.join('\n'), 'info', () => {
+                        message
+                            .fire({
+                                showCloseButton: true,
+                                showCancelButton: true,
+                                title: '已复制该分组下全部磁力链接到剪切板',
+                                html: '<b> 是否使用 Aria2 RPC 批量下载所有磁力链接 ? </b>',
+                            })
+                            .then((result) => {
+                                if (result.isConfirmed) {
+                                    // cycle send to rpc
+                                    for (let i = 0; i < magnetLinks.length; i++) {
+                                        util.sendToRPC(magnetLinks[i])
+                                    }
+                                }
+                            })
+                    })
+                } else {
+                    message.fire({
+                        icon: 'error',
+                        title: '未找到磁力链接',
+                    })
+                }
+            }
+        },
         onClickHighlightMagnetBox: async (event) => {
             let target = event.target
             // 避免点击Box空白处时触发
@@ -381,6 +430,9 @@
 
             // onCopy
             $(document).on('click', '[data-clipboard-text]', operation.onCopyMagnet)
+
+            // onSubClick
+            $(document).on('click', '.js-expand_bangumi-subgroup', operation.onSubClick)
 
             // 设置高亮颜色
             $(document).on('click', '#highlight-magnet-box', operation.onClickHighlightMagnetBox)
