@@ -2,7 +2,7 @@
 // @name         蜜柑计划 快速下载 - Mikan Project Quick Download
 // @namespace    https://github.com/ewigl/mpus
 // @version      0.5.1
-// @description  高亮磁链, 复制磁链(时/后)直接打开, 通过RPC快速创建aria2下载任务.
+// @description  高亮磁链, (批量)复制磁链(时/后)直接打开, 通过RPC快速创建aria2下载任务.
 // @author       Licht
 // @license      MIT
 // @homepage     https://github.com/ewigl/mpus
