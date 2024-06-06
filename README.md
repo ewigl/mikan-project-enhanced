@@ -18,9 +18,9 @@
 
     ![02](https://raw.githubusercontent.com/ewigl/mpus/main/images/02.jpg)
 
-    ![08](https://raw.githubusercontent.com/ewigl/mpus/main/images/08.jpg)
+    ![08](https://raw.githubusercontent.com/ewigl/mpus/main/images/08.png)
 
-    ![09](https://raw.githubusercontent.com/ewigl/mpus/main/images/09.jpg)
+    ![09](https://raw.githubusercontent.com/ewigl/mpus/main/images/09.png)
 
 -   高亮磁链
 
