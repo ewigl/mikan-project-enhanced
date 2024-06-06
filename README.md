@@ -4,17 +4,23 @@
 
 高亮磁链, 复制磁链(时/后)直接打开, 通过 RPC 快速创建 aria2 下载任务.
 
-#### V0.5
+#### V 0.6
 
--   添加了批量复制磁链功能，点击字幕组名称即可复制该字幕组全部磁链
+-   批量复制表格中的磁链，点击表头即可（如果表格内项目过多，请先点击表格右下角"显示更多"按钮以加载所有项目）
+
+    ![07](https://raw.githubusercontent.com/ewigl/mpus/main/images/07.png)
+
+-   批量复制字幕组磁链，番组订阅处点击字幕组名称即可
 
     ![06](https://raw.githubusercontent.com/ewigl/mpus/main/images/06.png)
 
-#### V 0.4
-
--   在订阅更新处添加了一个设置按钮
+-   MPQD - 设置按钮
 
     ![02](https://raw.githubusercontent.com/ewigl/mpus/main/images/02.jpg)
+
+    ![08](https://raw.githubusercontent.com/ewigl/mpus/main/images/08.jpg)
+
+    ![09](https://raw.githubusercontent.com/ewigl/mpus/main/images/09.jpg)
 
 -   高亮磁链
 
