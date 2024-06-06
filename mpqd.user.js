@@ -420,6 +420,9 @@
         checkLeftbarNav() {
             return $('.leftbar-nav').length > 0
         },
+        checkClassicView() {
+            return $('.classic-view-pagination1').length > 0
+        },
         addSettingsButtonToListNav() {
             // main & sub page
             const settingsButtonDom = `
@@ -429,12 +432,23 @@
             `
             $('#an-list-nav').append(settingsButtonDom)
         },
-        addSettingsToLeftbarNav() {
+        addSettingsButtonToLeftbarNav() {
             // search & bangumi page
             const settingsButton = `
-                        <button id="mpqd-settings-button" class="btn logmod-submit" data-bangumiid="2968" data-subtitlegroupid=""> MPQD 设置 </button>
-                        `
+            <button id="mpqd-settings-button" class="btn logmod-submit" data-bangumiid="2968" data-subtitlegroupid=""> MPQD 设置 </button>
+            `
             $('.leftbar-nav')[0].insertAdjacentHTML('beforeend', settingsButton)
+        },
+        addSettingsButtonToClassicView() {
+            // classic view
+            const settingsButton = `
+            <div class="classic-view-pagination1 pull-left" style="margin-top: -10px;">
+                <div id="mpqd-settings-button" class="pagination" style="font-size: 1rem; cursor: pointer;" title="蜜柑计划 快速下载 - MPQD 设置">
+                    <i class="fa fa-2x fa-sliders"></i>
+                </div>
+            </div>
+            `
+            $('.classic-view-pagination1').before(settingsButton)
         },
         addListeners() {
             // 设置
@@ -479,11 +493,9 @@
             initAction.initDefaultConfig()
 
             // 添加设置按钮
-            if (initAction.checkListNav()) {
-                initAction.addSettingsButtonToListNav()
-            } else if (initAction.checkLeftbarNav()) {
-                initAction.addSettingsToLeftbarNav()
-            }
+            initAction.checkListNav() && initAction.addSettingsButtonToListNav()
+            initAction.checkLeftbarNav() && initAction.addSettingsButtonToLeftbarNav()
+            initAction.checkClassicView() && initAction.addSettingsButtonToClassicView()
 
             // 添加监听
             initAction.addListeners()
