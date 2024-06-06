@@ -430,17 +430,26 @@
         init() {
             util.initDefaultConfig()
 
+            // 添加按钮
+            this.addSettingsButton()
+
+            // 添加监听
+            this.addListeners()
+        },
+        addSettingsButton() {
+            // main & sub page
             const settingsButtonDom = `
             <div id="mpqd-settings-button" class="sk-col my-rss-date indent-btn" title="蜜柑计划 快速下载 - MPQD 设置">
                 <i class="fa fa-2x fa-sliders"></i>
             </div>
             `
-
-            // 添加设置按钮
             $('#an-list-nav').append(settingsButtonDom)
 
-            // 添加监听
-            this.addListeners()
+            // search & bangumi page
+            const settingsButton = `
+            <button id="mpqd-settings-button" class="btn logmod-submit" data-bangumiid="2968" data-subtitlegroupid=""> MPQD 设置 </button>
+            `
+            $('.leftbar-nav')[0].insertAdjacentHTML('beforeend', settingsButton)
         },
         addListeners() {
             // 设置
