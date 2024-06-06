@@ -28,6 +28,10 @@
         cursor: alias;
     }
 
+    .table-striped th {
+        cursor: alias;
+    }
+
     .custom-box {
         border-left: 2px solid;
         padding-left: 8px;
@@ -148,6 +152,38 @@
             defaultConfig.rpcSettings.forEach((value) => {
                 util.setValue(value.name, value.value)
             })
+        },
+        batchCopy(targetElement) {
+            // get elements that have attr "data-clipboard-text"
+            let magnetElements = $(targetElement).find('[data-clipboard-text]')
+            // map to array
+            let magnetLinks = []
+            magnetElements.each((_index, element) => {
+                magnetLinks.push($(element).attr('data-clipboard-text'))
+            })
+
+            if (magnetLinks.length) {
+                GM_setClipboard(magnetLinks.join('\n'), 'info', () => {
+                    message
+                        .fire({
+                            showCloseButton: true,
+                            showCancelButton: true,
+                            title: '已复制该分组下全部磁力链接到剪切板',
+                            html: '<b> 是否使用 Aria2 RPC 批量下载所有磁力链接 ? </b>',
+                        })
+                        .then((result) => {
+                            if (result.isConfirmed) {
+                                // cycle send to rpc
+                                util.sendToRPC(magnetLinks)
+                            }
+                        })
+                })
+            } else {
+                message.fire({
+                    icon: 'error',
+                    title: '未找到磁力链接',
+                })
+            }
         },
         sendToRPC: async (magnetLinks) => {
             let rpc = {
@@ -330,50 +366,27 @@
                 })
             }
         },
-
-        onSubClick: async (event) => {
+        onSubClick: (event) => {
             // to "stopPropagation"
             // if target has no class "js-expand_bangumi-subgroup" or "tag-res-name", return
             if (!$(event.target).hasClass('js-expand_bangumi-subgroup') && !$(event.target).hasClass('tag-res-name')) return
 
             let currentTarget = event.currentTarget
-            console.log('currentTarget', currentTarget)
             // get data-bangumisubgroupindex
             let bangumiSubGroupIndex = $(currentTarget).attr('data-bangumisubgroupindex')
             // get mid-frame element js-expand_bangumi-subgroup-x-episodes
             let episodesElement = $('.js-expand_bangumi-subgroup-' + bangumiSubGroupIndex + '-episodes')[0]
 
             if (episodesElement) {
-                // get elements that have attr "data-clipboard-text"
-                let magnetElements = $(episodesElement).find('[data-clipboard-text]')
-                // map to array
-                let magnetLinks = []
-                magnetElements.each((_index, element) => {
-                    magnetLinks.push($(element).attr('data-clipboard-text'))
-                })
-
-                if (magnetLinks.length) {
-                    GM_setClipboard(magnetLinks.join('\n'), 'info', () => {
-                        message
-                            .fire({
-                                showCloseButton: true,
-                                showCancelButton: true,
-                                title: '已复制该分组下全部磁力链接到剪切板',
-                                html: '<b> 是否使用 Aria2 RPC 批量下载所有磁力链接 ? </b>',
-                            })
-                            .then((result) => {
-                                if (result.isConfirmed) {
-                                    // cycle send to rpc
-                                    util.sendToRPC(magnetLinks)
-                                }
-                            })
-                    })
-                } else {
-                    message.fire({
-                        icon: 'error',
-                        title: '未找到磁力链接',
-                    })
-                }
+                util.batchCopy(episodesElement)
+            }
+        },
+        ontableHeaderClick: (event) => {
+            let target = event.target
+            let currentTable = event.currentTarget
+            // if click on th
+            if ($(target).is('th') && currentTable) {
+                util.batchCopy(currentTable)
             }
         },
         onClickHighlightMagnetBox: async (event) => {
@@ -459,6 +472,9 @@
 
             // onSubClick
             $(document).on('click', '.js-expand_bangumi-subgroup', operation.onSubClick)
+
+            // ontableHeaderClick
+            $(document).on('click', '.table-striped', operation.ontableHeaderClick)
 
             // 设置高亮颜色
             $(document).on('click', '#highlight-magnet-box', operation.onClickHighlightMagnetBox)
