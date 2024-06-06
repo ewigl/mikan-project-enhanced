@@ -215,7 +215,7 @@
             <!-- 高亮磁链 -->
             <div class="custom-box">
                 <div class="custom-title">
-                    复制磁链时直接打开:
+                    复制单个磁链时直接打开:
                 </div>
                 <div>
                     不再弹出RPC下载提示框
