@@ -137,20 +137,6 @@
         setValue(name, value) {
             GM_setValue(name, value)
         },
-        initDefaultConfig() {
-            defaultConfig.rpcSettings.forEach((item) => {
-                util.getValue(item.name) === undefined && util.setValue(item.name, item.value)
-            })
-
-            // 是否立即打开磁链
-            util.getValue('magnet_link_instant_open') === undefined && util.setValue('magnet_link_instant_open', false)
-
-            // 高亮磁链颜色
-            util.getValue('magnet_highlight_color') === undefined &&
-                util.setValue('magnet_highlight_color', defaultConfig.defaultColor)
-            // 添加style以高亮磁链
-            GM_addStyle(`.magnet-link {color: ${util.getValue('magnet_highlight_color')}}`)
-        },
         getDefaultColorButtonsDom() {
             let dom = ''
             defaultConfig.colorList.forEach((item) => {
@@ -169,19 +155,6 @@
                 secret: util.getValue('rpc_secret'),
                 dir: util.getValue('rpc_dir').trim() === '' ? undefined : util.getValue('rpc_dir'),
             }
-
-            // let rpcData = {
-            //     id: new Date().getTime(),
-            //     jsonrpc: '2.0',
-            //     method: 'aria2.addUri',
-            //     params: [
-            //         `token:${rpc.secret}`,
-            //         [magnetLink],
-            //         {
-            //             dir: rpc.dir,
-            //         },
-            //     ],
-            // }
 
             let rpcData = magnetLinks.map((magnetLink) => {
                 return {
@@ -425,16 +398,20 @@
         },
     }
 
-    // Main
-    const main = {
-        init() {
-            util.initDefaultConfig()
+    const initAction = {
+        initDefaultConfig() {
+            defaultConfig.rpcSettings.forEach((item) => {
+                util.getValue(item.name) === undefined && util.setValue(item.name, item.value)
+            })
 
-            // 添加按钮
-            this.addSettingsButton()
+            // 是否立即打开磁链
+            util.getValue('magnet_link_instant_open') === undefined && util.setValue('magnet_link_instant_open', false)
 
-            // 添加监听
-            this.addListeners()
+            // 高亮磁链颜色
+            util.getValue('magnet_highlight_color') === undefined &&
+                util.setValue('magnet_highlight_color', defaultConfig.defaultColor)
+            // 添加style以高亮磁链
+            GM_addStyle(`.magnet-link {color: ${util.getValue('magnet_highlight_color')}}`)
         },
         addSettingsButton() {
             // main & sub page
@@ -484,6 +461,20 @@
             $(document).on('input', '#rpc-dir', async (e) => {
                 util.setValue('rpc_dir', e.target.value)
             })
+        },
+    }
+
+    // Main
+    const main = {
+        init() {
+            // 初始化配置
+            initAction.initDefaultConfig()
+
+            // 添加按钮
+            initAction.addSettingsButton()
+
+            // 添加监听
+            initAction.addListeners()
         },
     }
 
