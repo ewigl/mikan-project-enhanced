@@ -2,7 +2,10 @@
 
 油猴脚本, [GitHub](https://github.com/ewigl/mpus), [Greasy Fork](https://greasyfork.org/zh-CN/scripts/481873-%E8%9C%9C%E6%9F%91%E8%AE%A1%E5%88%92-%E5%BF%AB%E9%80%9F%E4%B8%8B%E8%BD%BD-mikan-project-quick-download)
 
-高亮磁链, 复制磁链(时/后)直接打开, 通过 RPC 快速创建 aria2 下载任务.
+-   高亮磁链
+-   批量复制磁链
+-   复制单个磁链(时/后)直接(使用默认 torrent 软件)打开
+-   复制磁链后通过 RPC 快速创建 aria2 下载任务
 
 #### V 0.6
 
