@@ -413,7 +413,14 @@
             // 添加style以高亮磁链
             GM_addStyle(`.magnet-link {color: ${util.getValue('magnet_highlight_color')}}`)
         },
-        addSettingsButton() {
+        // check if in main or sub page
+        checkListNav() {
+            return $('#an-list-nav').length > 0
+        },
+        checkLeftbarNav() {
+            return $('.leftbar-nav').length > 0
+        },
+        addSettingsButtonToListNav() {
             // main & sub page
             const settingsButtonDom = `
             <div id="mpqd-settings-button" class="sk-col my-rss-date indent-btn" title="蜜柑计划 快速下载 - MPQD 设置">
@@ -421,11 +428,12 @@
             </div>
             `
             $('#an-list-nav').append(settingsButtonDom)
-
+        },
+        addSettingsToLeftbarNav() {
             // search & bangumi page
             const settingsButton = `
-            <button id="mpqd-settings-button" class="btn logmod-submit" data-bangumiid="2968" data-subtitlegroupid=""> MPQD 设置 </button>
-            `
+                        <button id="mpqd-settings-button" class="btn logmod-submit" data-bangumiid="2968" data-subtitlegroupid=""> MPQD 设置 </button>
+                        `
             $('.leftbar-nav')[0].insertAdjacentHTML('beforeend', settingsButton)
         },
         addListeners() {
@@ -470,8 +478,12 @@
             // 初始化配置
             initAction.initDefaultConfig()
 
-            // 添加按钮
-            initAction.addSettingsButton()
+            // 添加设置按钮
+            if (initAction.checkListNav()) {
+                initAction.addSettingsButtonToListNav()
+            } else if (initAction.checkLeftbarNav()) {
+                initAction.addSettingsToLeftbarNav()
+            }
 
             // 添加监听
             initAction.addListeners()
