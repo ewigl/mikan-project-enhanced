@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         蜜柑计划 快速下载 - Mikan Project Quick Download
 // @namespace    https://github.com/ewigl/mpus
-// @version      0.6.1
+// @version      0.6.2
 // @description  高亮磁链, (批量)复制磁链(时/后)直接打开, 通过RPC快速创建aria2下载任务.
 // @author       Licht
 // @license      MIT
 // @homepage     https://github.com/ewigl/mpus
 // @match        http*://mikanani.me/*
-// @match        http*://mikanani.tv/*
+// @match        http*://mikanime.tv/*
 // @icon         https://mikanani.me/images/favicon.ico?v=2
 // @require      https://unpkg.com/jquery@3.7.1/dist/jquery.min.js
 // @require      https://unpkg.com/sweetalert2@11.10.1/dist/sweetalert2.all.min.js
