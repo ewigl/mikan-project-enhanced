@@ -13,6 +13,7 @@
 // @require      https://unpkg.com/sweetalert2@11.10.1/dist/sweetalert2.all.min.js
 // @connect      localhost
 // @connect      *
+// @grant        GM_info
 // @grant        GM_addStyle
 // @grant        GM_setClipboard
 // @grant        GM_getValue
@@ -157,6 +158,7 @@
         batchCopy(targetElement) {
             // get elements that have attr "data-clipboard-text"
             let magnetElements = $(targetElement).find('[data-clipboard-text]')
+
             // map to array
             let magnetLinks = []
             magnetElements.each((_index, element) => {
@@ -164,21 +166,34 @@
             })
 
             if (magnetLinks.length) {
-                GM_setClipboard(magnetLinks.join('\n'), 'info', () => {
-                    message
-                        .fire({
-                            showCloseButton: true,
-                            showCancelButton: true,
-                            title: '已复制该分组下全部磁力链接到剪切板',
-                            html: '<b> 是否使用 Aria2 RPC 批量下载所有磁力链接 ? </b>',
+                let cilpboardSet = false
+                try {
+                    GM_setClipboard(magnetLinks.join('\n'))
+                    cilpboardSet = true
+                } catch (error) {
+                    console.log(error)
+                } finally {
+                    if (cilpboardSet) {
+                        message
+                            .fire({
+                                showCloseButton: true,
+                                showCancelButton: true,
+                                title: '已复制该分组下全部磁力链接到剪切板',
+                                html: '<b> 是否使用 Aria2 RPC 批量下载所有磁力链接 ? </b>',
+                            })
+                            .then((result) => {
+                                if (result.isConfirmed) {
+                                    // cycle send to rpc
+                                    util.sendToRPC(magnetLinks)
+                                }
+                            })
+                    } else {
+                        message.fire({
+                            icon: 'error',
+                            title: '复制磁力链接失败',
                         })
-                        .then((result) => {
-                            if (result.isConfirmed) {
-                                // cycle send to rpc
-                                util.sendToRPC(magnetLinks)
-                            }
-                        })
-                })
+                    }
+                }
             } else {
                 message.fire({
                     icon: 'error',
@@ -427,6 +442,12 @@
             // 添加style以高亮磁链
             GM_addStyle(`.magnet-link {color: ${util.getValue('magnet_highlight_color')}}`)
         },
+        // check scriptHandler
+        getScriptHandler() {
+            // "Violentmonkey" or "Tampermonkey"
+            // console.log(GM_info)
+            return GM_info.scriptHandler
+        },
         // check if in main or sub page
         checkListNav() {
             return $('#an-list-nav').length > 0
@@ -506,6 +527,9 @@
     // Main
     const main = {
         init() {
+            // check scriptHandler
+            // var mpusScriptHandler = initAction.getScriptHandler()
+
             // 初始化配置
             initAction.initDefaultConfig()
 
