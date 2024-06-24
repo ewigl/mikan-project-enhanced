@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         蜜柑计划 快速下载 - Mikan Project Quick Download
 // @namespace    https://github.com/ewigl/mpus
-// @version      0.6.5
-// @description  高亮磁链, (批量)复制磁链(时/后)直接打开, 通过RPC快速创建aria2下载任务.
+// @version      0.7.0
+// @description  高亮磁链, 复制磁链(时/后)直接打开, 批量复制磁链
 // @author       Licht
 // @license      MIT
 // @homepage     https://github.com/ewigl/mpus
@@ -18,7 +18,6 @@
 // @grant        GM_setClipboard
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
 ;(function () {
@@ -58,6 +57,7 @@
     #instant_open_input {
         width: 16px;
         height: 16px;
+        cursor: pointer;
     }
        
     .highlight-color-dot {
@@ -69,43 +69,11 @@
         border-radius: 50%;
         cursor: pointer;
     }
-    
-    .rpc-settings-label {
-        display: flex;
-        align-items: center;
-    }
-    
-    .rpc-settings-label div {
-        width: 20%;
-    }
-    
-    .rpc-settings-input {
-        display: inline-block;
-        flex: 1;
-        height: 32px;
-        padding: 5px;
-        border: 1px solid;
-        border-radius: 5px;
-    }
     `
     GM_addStyle(styleCSS)
 
     // 默认设置
     const defaultConfig = {
-        rpcSettings: [
-            {
-                name: 'rpc_address',
-                value: 'http://localhost:6800/jsonrpc',
-            },
-            {
-                name: 'rpc_secret',
-                value: '',
-            },
-            {
-                name: 'rpc_dir',
-                value: '',
-            },
-        ],
         colorList: [
             '#ff530e',
             '#fe9b36',
@@ -130,6 +98,7 @@
         toast: true,
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        showCancelButton: false,
         width: '32rem',
         timer: 5000,
         timerProgressBar: true,
@@ -149,11 +118,6 @@
                 dom += `<div class="highlight-color-dot" style="background-color: ${item}"></div>`
             })
             return dom
-        },
-        resetToDefaultRPCConfig() {
-            defaultConfig.rpcSettings.forEach((value) => {
-                util.setValue(value.name, value.value)
-            })
         },
         batchCopy(targetElement) {
             // get elements that have attr "data-clipboard-text"
@@ -201,63 +165,6 @@
                 })
             }
         },
-        sendToRPC: async (magnetLinks) => {
-            let rpc = {
-                address: util.getValue('rpc_address'),
-                secret: util.getValue('rpc_secret'),
-                dir: util.getValue('rpc_dir').trim() === '' ? undefined : util.getValue('rpc_dir'),
-            }
-
-            let rpcData = magnetLinks.map((magnetLink) => {
-                return {
-                    id: new Date().getTime(),
-                    jsonrpc: '2.0',
-                    method: 'aria2.addUri',
-                    params: [
-                        `token:${rpc.secret}`,
-                        [magnetLink],
-                        {
-                            dir: rpc.dir,
-                        },
-                    ],
-                }
-            })
-
-            GM_xmlhttpRequest({
-                method: 'POST',
-                url: rpc.address,
-                data: JSON.stringify(rpcData),
-                onload: (response) => {
-                    let resJson = JSON.parse(response.responseText)
-
-                    if (resJson.result) {
-                        message.fire({
-                            icon: 'success',
-                            title: 'RPC请求发送成功, 请前往控制台查看',
-                        })
-                    } else {
-                        message.fire({
-                            icon: 'error',
-                            title: 'RPC请求发送失败, 请检查RPC设置是否正确',
-                            text: `${resJson.error.code} / ${resJson.error.message}`,
-                        })
-                    }
-                },
-                onerror: (error) => {
-                    message.fire({
-                        icon: 'error',
-                        title: 'RPC请求发送失败, 请检查RPC设置是否正确',
-                        text: JSON.stringify(error),
-                    })
-                },
-                onabort: () => {
-                    message.fire({
-                        icon: 'error',
-                        title: '内部错误',
-                    })
-                },
-            })
-        },
     }
 
     const operation = {
@@ -268,9 +175,6 @@
             <div class="custom-box">
                 <div class="custom-title">
                     复制单个磁链时直接打开:
-                </div>
-                <div>
-                    不再弹出RPC下载提示框
                 </div>
                 <input id="instant_open_input" type="checkbox" ${util.getValue('magnet_link_instant_open') ? 'checked' : ''} />
             </div>
@@ -285,41 +189,6 @@
                 </div>
                 <button id="un-highlight-magnet-button" class="custom-button">
                     取消高亮磁链
-                </button>
-            </div>
-        
-            <!-- RPC 设置 -->
-            <div id="rpc-settings-box" class="custom-box">
-                <b class="custom-title">
-                    RPC 设置:
-                </b>
-                <div>
-                    修改时自动保存
-                </div>
-                <br>
-                <div>
-                    <label class="rpc-settings-label">
-                        <div>RPC地址:</div>
-                        <input id="rpc-address" type="text" class="rpc-settings-input"
-                            title="默认地址为 http://localhost:6800/jsonrpc" value="${util.getValue('rpc_address')}">
-                    </label>
-                </div>
-                <div>
-                    <label class="rpc-settings-label">
-                        <div>RPC密钥:</div>
-                        <input id="rpc-secret" type="text" class="rpc-settings-input" title="无密钥时留空"
-                            value="${util.getValue('rpc_secret')}">
-                    </label>
-                </div>
-                <div>
-                    <label class="rpc-settings-label">
-                        <div>下载目录:</div>
-                        <input id="rpc-dir" type="text" class="rpc-settings-input" title="留空则为 aria2 默认路径"
-                            value="${util.getValue('rpc_dir')}">
-                    </label>
-                </div>
-                <button id="rpc-reset-button" class="custom-button rpc-settings-button">
-                    重置RPC设置
                 </button>
             </div>
             `
@@ -353,28 +222,15 @@
                     </button>
                 </a>
             </div>
-        
-            <!-- 提示 -->
-            <div>
-                <b>
-                    是否使用 Aria2 RPC 下载该磁力链接 ?
-                </b>
-            </div>
             `
 
             if (magnetLink) {
-                message
-                    .fire({
-                        showCloseButton: true,
-                        showCancelButton: true,
-                        title: '已复制磁力链接到剪切板',
-                        html: onCopyDom,
-                    })
-                    .then((result) => {
-                        if (result.isConfirmed) {
-                            util.sendToRPC([magnetLink])
-                        }
-                    })
+                message.fire({
+                    showCloseButton: true,
+                    showConfirmButton: false,
+                    title: '已复制磁力链接到剪切板',
+                    html: onCopyDom,
+                })
             } else {
                 message.fire({
                     icon: 'error',
@@ -419,22 +275,12 @@
             util.setValue('magnet_highlight_color', defaultConfig.defaultColor)
             GM_addStyle(`.magnet-link {color: ${util.getValue('magnet_highlight_color')}}`)
         },
-        onResetRPCSettings: async () => {
-            util.resetToDefaultRPCConfig()
-            $('#rpc-address').val(util.getValue('rpc_address'))
-            $('#rpc-secret').val(util.getValue('rpc_secret'))
-            $('#rpc-dir').val(util.getValue('rpc_dir'))
-        },
     }
 
     const initAction = {
         initDefaultConfig() {
-            defaultConfig.rpcSettings.forEach((item) => {
-                util.getValue(item.name) === undefined && util.setValue(item.name, item.value)
-            })
-
             // 是否立即打开磁链
-            util.getValue('magnet_link_instant_open') === undefined && util.setValue('magnet_link_instant_open', false)
+            util.getValue('magnet_link_instant_open') === undefined && util.setValue('magnet_link_instant_open', true)
 
             // 高亮磁链颜色
             util.getValue('magnet_highlight_color') === undefined &&
@@ -503,9 +349,6 @@
 
             // 取消高亮
             $(document).on('click', '#un-highlight-magnet-button', operation.onClickUnHighlightMagnetButton)
-
-            // 重置RPC设置
-            $(document).on('click', '#rpc-reset-button', operation.onResetRPCSettings)
 
             // 是否直接打开磁链的checkbox
             $(document).on('change', '#instant_open_input', (e) => {
