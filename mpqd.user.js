@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         蜜柑计划 快速下载 - Mikan Project Quick Download
 // @namespace    https://github.com/ewigl/mpus
-// @version      0.7.0
+// @version      0.7.1
 // @description  高亮磁链, 复制磁链(时/后)直接打开, 批量复制磁链
 // @author       Licht
 // @license      MIT
@@ -138,19 +138,11 @@
                     console.log(error)
                 } finally {
                     if (cilpboardSet) {
-                        message
-                            .fire({
-                                showCloseButton: true,
-                                showCancelButton: true,
-                                title: '已复制该分组下全部磁力链接到剪切板',
-                                html: '<b> 是否使用 Aria2 RPC 批量下载所有磁力链接 ? </b>',
-                            })
-                            .then((result) => {
-                                if (result.isConfirmed) {
-                                    // cycle send to rpc
-                                    util.sendToRPC(magnetLinks)
-                                }
-                            })
+                        message.fire({
+                            showCloseButton: true,
+                            showConfirmButton: false,
+                            title: '已复制该分组下全部磁力链接到剪切板',
+                        })
                     } else {
                         message.fire({
                             icon: 'error',
@@ -353,16 +345,6 @@
             // 是否直接打开磁链的checkbox
             $(document).on('change', '#instant_open_input', (e) => {
                 util.setValue('magnet_link_instant_open', e.target.checked)
-            })
-            // RPC表单
-            $(document).on('input', '#rpc-address', async (e) => {
-                util.setValue('rpc_address', e.target.value)
-            })
-            $(document).on('input', '#rpc-secret', async (e) => {
-                util.setValue('rpc_secret', e.target.value)
-            })
-            $(document).on('input', '#rpc-dir', async (e) => {
-                util.setValue('rpc_dir', e.target.value)
             })
         },
     }
