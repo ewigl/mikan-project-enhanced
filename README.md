@@ -18,11 +18,11 @@
 
     ![05](https://raw.githubusercontent.com/ewigl/mpus/main/images/05.png)
 
--   批量复制表格中的磁链，点击表头即可（如果表格内项目过多，请先点击表格右下角"显示更多"按钮以加载所有项目）
+-   点击表头，批量复制表格中的磁链，如果表格内项目过多，请先点击表格右下角"显示更多"按钮以加载所有项目
 
     ![07](https://raw.githubusercontent.com/ewigl/mpus/main/images/07.png)
 
--   批量复制字幕组磁链，番组订阅处点击字幕组名称即可
+-   番组订阅处点击字幕组名称，批量复制字幕组磁链
 
     ![06](https://raw.githubusercontent.com/ewigl/mpus/main/images/06.png)
 
