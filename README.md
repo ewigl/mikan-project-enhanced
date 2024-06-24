@@ -4,14 +4,19 @@
 
 -   高亮磁链
 -   批量复制磁链
--   复制单个磁链(时/后)直接(使用默认 torrent 软件)打开
--   复制磁链后通过 RPC 快速创建 aria2 下载任务
+-   复制单个磁链(时/后)使用默认 BitTorrent 软件打开
 
-#### V 0.6.5
+#### V 0.7.0
+
+-   移除 Aria2 RPC 下载支持，推荐使用 qBittorrent 等 BitTorrent 软件
 
 -   添加[暴力猴](https://github.com/violentmonkey/violentmonkey)支持
 
-#### V 0.6
+#### V 0.6.0 +
+
+-   高亮磁链
+
+    ![05](https://raw.githubusercontent.com/ewigl/mpus/main/images/05.png)
 
 -   批量复制表格中的磁链，点击表头即可（如果表格内项目过多，请先点击表格右下角"显示更多"按钮以加载所有项目）
 
@@ -21,7 +26,7 @@
 
     ![06](https://raw.githubusercontent.com/ewigl/mpus/main/images/06.png)
 
--   MPQD - 设置按钮
+-   在各个页面添加了 MPQD 设置按钮
 
     ![02](https://raw.githubusercontent.com/ewigl/mpus/main/images/02.jpg)
 
@@ -29,12 +34,8 @@
 
     ![09](https://raw.githubusercontent.com/ewigl/mpus/main/images/09.png)
 
--   高亮磁链
-
-    ![05](https://raw.githubusercontent.com/ewigl/mpus/main/images/05.jpg)
-
 -   设置
 
-    ![03](https://raw.githubusercontent.com/ewigl/mpus/main/images/03.jpg)
+    ![03](https://raw.githubusercontent.com/ewigl/mpus/main/images/03.png)
 
-    ![04](https://raw.githubusercontent.com/ewigl/mpus/main/images/04.jpg)
+    ![04](https://raw.githubusercontent.com/ewigl/mpus/main/images/04.png)
