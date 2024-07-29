@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         蜜柑计划 快速下载 - Mikan Project Quick Download
 // @namespace    https://github.com/ewigl/mpus
-// @version      0.7.1
+// @version      0.7.2
 // @description  高亮磁链, 复制磁链(时/后)直接打开, 批量复制磁链
 // @author       Licht
 // @license      MIT
@@ -245,6 +245,10 @@
                 util.batchCopy(episodesElement)
             }
         },
+        onCopyUpdatesClick: (_event) => {
+            let EPUpdatesElement = $('#an-list-res')
+            util.batchCopy(EPUpdatesElement)
+        },
         ontableHeaderClick: (event) => {
             let target = event.target
             let currentTable = event.currentTarget
@@ -305,6 +309,15 @@
             `
             $('#an-list-nav').append(settingsButtonDom)
         },
+        addCopyButtonToListNav() {
+            // main & sub page
+            const copyButtonDom = `
+            <div id="mpqd-copy-updates-button" class="sk-col my-rss-date indent-btn" title="复制全部">
+                <i class="fa fa-2x fa-copy"></i>
+            </div>
+            `
+            $('#an-list-nav').append(copyButtonDom)
+        },
         addSettingsButtonToLeftbarNav() {
             // search & bangumi page
             const settingsButton = `
@@ -333,6 +346,9 @@
             // onSubClick
             $(document).on('click', '.js-expand_bangumi-subgroup', operation.onSubClick)
 
+            // onCopyUpdatesClick
+            $(document).on('click', '#mpqd-copy-updates-button', operation.onCopyUpdatesClick)
+
             // ontableHeaderClick
             $(document).on('click', '.table-striped', operation.ontableHeaderClick)
 
@@ -360,6 +376,7 @@
 
             // 添加设置按钮
             initAction.checkListNav() && initAction.addSettingsButtonToListNav()
+            initAction.checkListNav() && initAction.addCopyButtonToListNav()
             initAction.checkLeftbarNav() && initAction.addSettingsButtonToLeftbarNav()
             initAction.checkClassicView() && initAction.addSettingsButtonToClassicView()
 
