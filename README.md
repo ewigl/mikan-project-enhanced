@@ -1,12 +1,12 @@
-### 蜜柑计划 快速下载 - Mikan Project Quick Download
+### 蜜柑计划 增强
 
-油猴/暴力猴脚本
+油猴 / 暴力猴 网页脚本
 
-[GitHub](https://github.com/ewigl/mpus)
+[GitHub](https://github.com/ewigl/mikan-project-enhanced)
 
-[Greasy Fork](https://greasyfork.org/zh-CN/scripts/481873-%E8%9C%9C%E6%9F%91%E8%AE%A1%E5%88%92-%E5%BF%AB%E9%80%9F%E4%B8%8B%E8%BD%BD-mikan-project-quick-download)
+[Greasy Fork](https://greasyfork.org/zh-CN/scripts/481873-%E8%9C%9C%E6%9F%91%E8%AE%A1%E5%88%92-%E5%A2%9E%E5%BC%BA)
 
--   复制单个磁链(时/后)使用默认 BitTorrent 软件打开
+-   复制单个磁链(时 / 后)使用默认 BitTorrent 软件打开
 
     ![03](https://raw.githubusercontent.com/ewigl/mpus/main/images/03.png)
 
